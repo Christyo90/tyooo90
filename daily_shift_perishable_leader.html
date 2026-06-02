@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Daily Shift: Perishable Leader</title>
+    <style>
+        /* Gen Z Luxury Synth / Glassmorphism Palette */
+        :root {
+            --bg-dark: #0a0a16;
+            --bg-card: rgba(255, 255, 255, 0.06);
+            --border-glass: rgba(255, 255, 255, 0.12);
+            --neon-green: #00f5d4;
+            --neon-purple: #7b2cbf;
+            --neon-pink: #ff0054;
+            --text-white: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cabinet Grotesk', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(123, 44, 191, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 245, 212, 0.12) 0px, transparent 50%);
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Glassmorphism Standard Container */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 520px;
+            margin: 20px auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 30%, var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--neon-green);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+        /* Buttons & Forms */
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--neon-green);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 12px rgba(0, 245, 212, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--neon-purple), #9d4edd);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 8px 24px rgba(123, 44, 191, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(123, 44, 191, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Fixed Sound Controls */
+        .audio-widget {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+        }
+
+        .btn-round {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-glass);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main Game Layout */
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: #e2e8f0;
+        }
+
+        /* Gamification Progress and Timer Bars */
+        .bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .bar-fill-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
+            transition: width 0.3s ease;
+        }
+
+        .bar-fill-timer {
+            height: 100%;
+            width: 100%;
+            background: var(--neon-pink);
+            transition: width 0.1s linear;
+        }
+
+        /* Core Mechanics: Drag and Drop Target Box */
+        .dropzone-card {
+            min-height: 160px;
+            border: 2px dashed rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.15rem;
+            line-height: 1.5;
+            font-weight: 600;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.15);
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .dropzone-card.drag-over {
+            border-color: var(--neon-green);
+            background: rgba(0, 245, 212, 0.08);
+            transform: scale(1.02);
+        }
+
+        /* Answer Chips Options */
+        .options-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .answer-chip {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: background 0.2s, transform 0.2s;
+            position: relative;
+        }
+
+        .answer-chip:active {
+            cursor: grabbing;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Drag Moving State */
+        .ghost-moving {
+            position: fixed !important;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            border-color: var(--neon-green);
+            background: rgba(26, 26, 46, 0.95);
+            opacity: 0.9;
+            transform: scale(1.04);
+        }
+
+        /* Screen Shake for Incorrect Action */
+        @keyframes shakeEffect {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+        .shake-active {
+            animation: shakeEffect 0.4s ease-in-out;
+        }
+
+        /* Feedback Pop-Up System */
+        .feedback-mask {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 5, 12, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .feedback-mask.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .feedback-box {
+            text-align: center;
+            padding: 30px;
+            max-width: 440px;
+            width: 90%;
+        }
+
+        .avatar-svg {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 20px;
+            transform: scale(0.6);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .feedback-mask.active .avatar-svg {
+            transform: scale(1);
+        }
+
+        .status-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .status-correct { color: var(--neon-green); }
+        .status-wrong { color: var(--neon-pink); }
+
+        /* Debrief Report Card Styles */
+        .report-badge-wrapper {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .review-scroller {
+            max-height: 260px;
+            overflow-y: auto;
+            margin: 20px 0;
+            padding-right: 6px;
+            text-align: left;
+        }
+
+        .review-scroller::-webkit-scrollbar {
+            width: 6px;
+        }
+        .review-scroller::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+
+        .review-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-left: 4px solid #fff;
+            font-size: 0.88rem;
+        }
+
+        .review-card.good { border-left-color: var(--neon-green); }
+        .review-card.bad { border-left-color: var(--neon-pink); }
+
+        /* Framework Hide/Show Utilities */
+        .hidden-view { display: none !important; }
+        
+        footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-top: auto;
+            text-transform: uppercase;
+        }
+
+        .hook-quote {
+            font-style: italic;
+            color: var(--neon-green);
+            font-weight: 600;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Control Button -->
+    <div class="audio-widget">
+        <button id="toggle-audio-btn" class="btn-round" title="Mute/Unmute">🔊</button>
+    </div>
+
+    <!-- STAGE 1: GATEWAY & MISSION BRIEFING -->
+    <div id="screen-gateway" class="glass-panel">
+        <div style="text-align: center;">
+            <h1>Daily Shift</h1>
+            <h3 style="color: var(--neon-purple); text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem; margin-bottom: 20px;">Perishable Leader Simulation</h3>
+            
+            <p style="text-align: justify;">
+                <strong>Mission Objective:</strong> Anda mengemban tanggung jawab penuh sebagai pemimpin operasional di area produk <em>Perishable</em> (Buah, Sayur, & Red Meat). Sepanjang giliran kerja harian (shift), tumpukan Kartu Situasi realitas lapangan menuntut keputusan cepat dan presisi Anda.
+            </p>
+
+            <p style="text-align: left; font-size: 0.88rem; color: var(--text-muted); padding-left: 10px; border-left: 2px solid var(--neon-purple);">
+                • Mekanika: Tarik (Drag) opsi solusi & jatuhkan (Drop) ke dalam kotak situasi.<br>
+                • Batas Waktu: 8 detik per skenario untuk menguji urgensi insting kepemimpinan.<br>
+                • Standar Kelulusan Nilai Evaluasi Kognitif: Minimal 70% Akurasi.
+            </p>
+
+            <p class="hook-quote">"Kelayakan produk perishable adalah harga mutlak. Bisakah Anda menjaga kepuasan konsumen sekaligus menekan pemusnahan barang?"</p>
+            
+            <div style="margin-top: 24px;">
+                <div class="input-group">
+                    <label for="p-name">Nama Lengkap Peserta</label>
+                    <input type="text" id="p-name" placeholder="Masukkan nama sesuai roster..." autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="p-nik">Nomor Induk Karyawan (NIK)</label>
+                    <input type="text" id="p-nik" placeholder="Masukkan NIK resmi..." autocomplete="off">
+                </div>
+                <button id="start-shift-btn" class="btn" style="margin-top: 10px;">Mulai Tugas Shift 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAGE 2: CORE EXECUTION (GAME BOARD) -->
+    <div id="screen-game" class="glass-panel hidden-view">
+        <div class="hud-top">
+            <span id="display-identity" style="color: var(--neon-green);">LEADER MODE</span>
+            <span id="display-counter">Progress: 0 / 15</span>
+        </div>
+        
+        <!-- Gamification Progress Bar -->
+        <div class="bar-container" title="Progress Penyelesaian Shift">
+            <div id="fill-progress" class="bar-fill-progress"></div>
+        </div>
+        
+        <!-- Urgency Instinct Timer Bar -->
+        <div class="bar-container" title="Sisa Waktu Berpikir">
+            <div id="fill-timer" class="bar-fill-timer"></div>
+        </div>
+
+        <!-- Drop target zone -->
+        <div id="drop-target" class="dropzone-card">
+            <span id="text-scenario">Memuat skenario kerja operasional...</span>
+        </div>
+
+        <!-- Answer choices deck -->
+        <div id="deck-options" class="options-stack"></div>
+    </div>
+
+    <!-- STAGE 3: POST-ACTION DEBRIEF (REPORT CARD) -->
+    <div id="screen-debrief" class="glass-panel hidden-view" style="text-align: center;">
+        <h2 id="debrief-verdict" style="font-size: 1.6rem; text-transform: uppercase;">Evaluasi Shift Berakhir</h2>
+        
+        <div class="report-badge-wrapper">
+            <!-- Dynamic SVG Reward Badge -->
+            <svg id="svg-badge-win" class="hidden-view" width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-green)" stroke-width="4"/>
+                <polygon points="50,15 63,38 89,38 68,54 76,80 50,65 24,80 32,54 11,38 37,38" fill="var(--neon-green)"/>
+            </svg>
+            <svg id="svg-badge-loss" class="hidden-view" width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-pink)" stroke-width="4"/>
+                <line x1="30" y1="30" x2="70" y2="70" stroke="var(--neon-pink)" stroke-width="8" stroke-linecap="round"/>
+                <line x1="70" y1="30" x2="30" y2="70" stroke="var(--neon-pink)" stroke-width="8" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <div style="margin: 15px 0;">
+            <span style="font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); font-weight: bold;">Skor Akurasi Capaian</span>
+            <h1 id="debrief-score-percent" style="font-size: 3.5rem; line-height: 1.2;">0%</h1>
+        </div>
+
+        <p id="debrief-reinforcement" style="font-weight: 500; margin-bottom: 20px;"></p>
+
+        <h3 style="text-align: left; font-size: 0.9rem; color: var(--neon-green); text-transform: uppercase; letter-spacing: 0.5px;">Buku Catatan Koreksi Lapangan:</h3>
+        <div id="debrief-scroller" class="review-scroller"></div>
+
+        <button id="restart-shift-btn" class="btn">Ulangi Pelatihan Shift 🔄</button>
+    </div>
+
+    <!-- DYNAMIC OVERLAY: VISUAL POP-UP FEEDBACK -->
+    <div id="feedback-pop-mask" class="feedback-mask">
+        <div id="feedback-window" class="glass-panel feedback-box">
+            
+            <!-- Happy Avatar (Correct Answer) -->
+            <svg id="avatar-happy" class="avatar-svg hidden-view" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="46" fill="#00f5d4"/>
+                <!-- Smile Face -->
+                <circle cx="33" cy="40" r="5" fill="#0a0a16"/>
+                <circle cx="67" cy="40" r="5" fill="#0a0a16"/>
+                <path d="M 30 60 Q 50 82 70 60" stroke="#0a0a16" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <!-- Thumb Up Gesture -->
+                <path d="M 76 75 C 84 75 84 88 76 88 L 68 88 L 68 94 C 68 99 56 99 56 94 L 56 88 L 48 88 C 44 88 44 75 48 75 Z" fill="#ffffff" stroke="#0a0a16" stroke-width="2"/>
+            </svg>
+
+            <!-- Sad Avatar (Incorrect Answer / Timeout) -->
+            <svg id="avatar-sad" class="avatar-svg hidden-view" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="46" fill="#ff0054"/>
+                <!-- Sad Face -->
+                <path d="M 28 42 L 38 38" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 72 42 L 62 38" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="33" cy="48" r="4" fill="#ffffff"/>
+                <circle cx="67" cy="48" r="4" fill="#ffffff"/>
+                <path d="M 34 72 Q 50 54 66 72" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <!-- Wiping Tears (Both sides streams) -->
+                <path d="M 33 54 L 33 66" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 3"/>
+                <path d="M 67 54 L 67 66" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 3"/>
+            </svg>
+
+            <div id="pop-title" class="status-title">Status Tindakan</div>
+            <p id="pop-correct-answer-alert" style="font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 8px;"></p>
+            <p id="pop-explanation" style="font-size: 0.88rem; color: #e2e8f0;"></p>
+        </div>
+    </div>
+
+    <footer>Education & Training Dept. &copy; 2026</footer>
+
+    <script>
+        /**
+         * COMPREHENSIVE QUESTION BANK (Sourced directly from Perishable Module Misi 5 & Misi 7)
+         * Structured strictly following Cognitive Weights: 60% C1 (Knowledge) & 40% C2 (Comprehension).
+         * 30 high-fidelity questions ensure over 155 million unique combinations of 15-question sessions.
+         */
+        const questionPool = [
+            // --- MISI 5: ORGANISASI & OPERASIONAL PERISHABLE ---
+            { code: "M5-01", type: "C1", q: "Sesuai struktur organisasi Perishable Indogrosir, siapakah posisi yang berada tepat di atas jabatan Supervisor Perishable Product?", a: "Store Operation Jr. Mgr/Mgr Perishable", w: ["Store Manager", "Stand Leader"], desc: "Hierarki lini operasional Perishable menempatkan Jr. Manager atau Manager Perishable sebagai atasan langsung Supervisor." },
+            { code: "M5-02", type: "C1", q: "Berdasarkan pedoman jam kerja karyawan Indogrosir, rentang waktu tugas resmi untuk Shift Pagi di area Perishable adalah...", a: "07:30 s/d 16:00", w: ["08:00 s/d 17:00", "07:00 s/d 15:30"], desc: "SOP shift pagi menetapkan jam masuk mulai pukul 07:30 dan berakhir pada pukul 16:00." },
+            { code: "M5-03", type: "C1", q: "Untuk memastikan kelancaran operasional hingga toko tutup, regulasi jam operasional masuk untuk Shift Siang adalah...", a: "15:00 s/d Selesai", w: ["13:00 s/d 21:00", "16:00 s/d 23:00"], desc: "Karyawan shift siang dijadwalkan masuk pukul 15:00 sampai seluruh tugas penutupan area selesai." },
+            { code: "M5-04", type: "C2", q: "Ketika personil Shift Siang mulai bertugas di area pajangan Perishable, manakah yang menjadi prioritas pemeriksaan utama mereka?", a: "Memeriksa kelayakan produk apakah masih baik atau harus turun pajang", w: ["Menghitung seluruh stok di gudang", "Mengubah tata letak dekorasi rak"], desc: "Shift siang memikul tanggung jawab krusial untuk mengaudit kesegaran produk yang sedang dipajang dan menurunkan item cacat." },
+            { code: "M5-05", type: "C2", q: "Saat menyortir buah di display pagi hari, Anda mengidentifikasi sebutir apel yang mengalami sedikit memar fisik. Langkah operasional yang tepat adalah...", a: "Segera melakukan turun pajang", w: ["Menatanya di tumpukan paling belakang", "Memotong bagian memar lalu memajangnya kembali"], desc: "SOP melarang keras memajang produk Perishable yang cacat atau jelek walau hanya sedikit demi menjaga reputasi kualitas toko." },
+            { code: "M5-06", type: "C2", q: "Seorang konsumen berniat membeli semangka merah, namun persediaan habis. Berdasarkan materi CRM, tindakan penanganan yang diajarkan adalah...", a: "Menawarkan semangka kuning yang setara sebagai produk substitusi", w: ["Meminta konsumen mencari di swalayan lain", "Mengabaikan kekosongan tersebut"], desc: "Customer Relationship Management (CRM) mewajibkan penawaran alternatif atau produk substitusi yang bernilai sepadan jika barang utama kosong." },
+            { code: "M5-07", type: "C1", q: "Apakah slogan atau prinsip kebersihan mutlak yang wajib dipahami dan diimplementasikan oleh setiap personil di departemen Perishable?", a: "Datang bersih, kerja bersih, pulang bersih", w: ["Bersih pangkal pandang", "Kebersihan parsial area display"], desc: "Prinsip 'Datang bersih, kerja bersih, pulang bersih' merupakan komitmen higienitas total tanpa kompromi di Indogrosir." },
+            { code: "M5-08", type: "C2", q: "Bagaimanakah kebijakan final perusahaan terhadap produk perishable yang telah diverifikasi tidak layak dikonsumsi?", a: "Wajib dimusnahkan secara menyeluruh", w: ["Diberikan diskon cuci gudang 90%", "Diolah kembali menjadi produk siap saji"], desc: "Kelayakan konsumsi adalah harga mati. Jika suatu produk perish dinyatakan tidak layak, langkah tunggalnya adalah pemusnahan." },
+            { code: "M5-09", type: "C1", q: "Manakah di bawah ini yang BUKAN merupakan bagian dari ruang lingkup aktivitas utama seorang Stand Keeper di lapangan?", a: "Mengurus penyelesaian transaksi finansial di meja kasir utama", w: ["Melakukan pengolahan barang rusak", "Menjaga konsistensi keindahan display"], desc: "Kasir utama berada di bawah manajemen departemen kasir, bukan merupakan deskripsi tugas Stand Keeper Perishable." },
+            { code: "M5-10", type: "C1", q: "Dalam struktur fungsional area perishable, divisi personil manakah yang memegang keahlian khusus untuk mengolah daging kiriman supplier?", a: "Butcher Team", w: ["Receiving Checker", "Stand Leader Buah & Sayur"], desc: "Butcher Team dibekali keahlian spesifik memotong dan mengolah daging agar siap dipajang dengan standar kelayakan tinggi." },
+            { code: "M5-11", type: "C2", q: "Mengapa kebersihan area kerja dan kesempurnaan penataan display produk perishable dianggap sebagai harga mutlak di Indogrosir?", a: "Untuk menjamin higienitas tinggi dan memicu loyalitas belanja konsumen", w: ["Hanya sebagai formalitas penilaian audit internal", "Agar beban kerja shift malam berkurang"], desc: "Display yang estetik dan higienis secara langsung memengaruhi kenyamanan belanja serta kepatuhan penuh pada food safety." },
+            { code: "M5-12", type: "C1", q: "Posisi jabatan yang memegang tanggung jawab memeriksa kualitas fisik komoditas perishable saat pertama kali diserahkan oleh pihak pemasok adalah...", a: "Receiving Checker Perishable Product", w: ["Stand Keeper Daily", "Store Manager"], desc: "Receiving Checker bertugas di pintu kedatangan barang untuk memastikan spek barang masuk sesuai pesanan dan standar." },
+            { code: "M5-13", type: "C1", q: "Bagian spesifik dalam struktur organisasi yang didedikasikan penuh mengurus aktivitas pengupasan, pemotongan, atau pengemasan buah segar dinamakan...", a: "Stand Keeper Processing Buah & Sayur", w: ["Stand Keeper Ready to Eat", "Stand Keeper Seafood"], desc: "Urusan pemrosesan awal buah dan sayur segar dikelola secara fokus oleh tim Stand Keeper Processing Buah & Sayur." },
+            { code: "M5-14", type: "C2", q: "Mengapa kerugian akibat sengketa perbedaan harga konsumen akibat kelalaian pembaharuan POP dibebankan pada Tim Perishable?", a: "Karena kegagalan verifikasi keakuratan POP & Price Tag adalah kelalaian tugas mereka", w: ["Karena sistem komputer kasir mendeteksi nama mereka", "Karena aturan acak dari kantor pusat"], desc: "Memastikan kesesuaian harga antara sistem, POP, dan Price Tag di rak display adalah kewajiban mutlak operasional harian tim." },
+            { code: "M5-15", type: "C1", q: "Formulasi strategi Customer Relationship Management (CRM) di Indogrosir dirancang untuk mencapai output utama berupa...", a: "Mengubah perilaku konsumen menjadi pelanggan yang loyal dan menguntungkan", w: ["Mempercepat proses bongkar muat barang", "Menghilangkan komplain operasional selamanya"], desc: "Inti CRM adalah membangun komunikasi bermakna guna mengikat kedekatan emosional konsumen agar menjadi pelanggan tetap yang loyal." },
+
+            // --- MISI 7: RED MEAT (DAGING SAPI) ---
+            { code: "M7-16", type: "C1", q: "Di manakah lokasi penempatan yang diwajibkan untuk menaruh produk daging segar kiriman supplier sebelum diproses?", a: "Cold Storage", w: ["Gudang Kering Sentral", "Anteroom Suhu Kamar"], desc: "Daging segar wajib dimasukkan ke dalam Cold Storage sesegera mungkin guna mempertahankan rantai dingin dan mencegah pembusukan bakteri." },
+            { code: "M7-17", type: "C1", q: "Potongan daging sapi berharga tinggi seperti Has Dalam (Tenderloin) dikelompokkan ke dalam kategori...", a: "Golongan 1 (Premium Cuts)", w: ["Golongan 2 (Secondary Cuts)", "Golongan 3 (Economy Cuts)"], desc: "Tenderloin berada di struktur tertinggi (Golongan 1 / Premium Cuts) karena keempukannya yang superior." },
+            { code: "M7-18", type: "C1", q: "Dalam pembagian kelas karkas sapi lokal maupun impor, bagian Lamusir (Rib Eye) secara resmi dimasukkan pada...", a: "Golongan 1 (Premium Cuts)", w: ["Golongan 2 (Secondary Cuts)", "Golongan 3 (Economy Cuts)"], desc: "Lamusir atau Rib Eye dinilai sebagai komoditas premium berkat kelembutan serat ototnya." },
+            { code: "M7-19", type: "C1", q: "Daging sapi bagian Has Luar (Sirloin/Striploin) diklasifikasikan ke dalam kategori...", a: "Golongan 1 (Premium Cuts)", w: ["Golongan 2 (Secondary Cuts)", "Golongan 3 (Economy Cuts)"], desc: "Has Luar termasuk dalam jajaran Premium Cuts (Golongan 1) bersama dengan Has Dalam dan Lamusir." },
+            { code: "M7-20", type: "C1", q: "Potongan daging sapi bagian Pendasar (Silver Side) secara regulasi dimasukkan ke dalam kelompok...", a: "Golongan 2 (Secondary Cuts)", w: ["Golongan 1 (Premium Cuts)", "Golongan 3 (Economy Cuts)"], desc: "Pendasar atau Silver Side dikelompokkan sebagai Secondary Cuts (Golongan 2) karena teksturnya yang lebih padat serat." },
+            { code: "M7-21", type: "C1", q: "Potongan bagian Tanjung (Rump) pada klasifikasi anatomi daging sapi Indogrosir menempati posisi...", a: "Golongan 2 (Secondary Cuts)", w: ["Golongan 1 (Premium Cuts)", "Golongan 3 (Economy Cuts)"], desc: "Tanjung dikategorikan sebagai Secondary Cuts atau Golongan 2." },
+            { code: "M7-22", type: "C1", q: "Daging sapi bagian Sengkel (Shank) secara resmi dimasukkan ke dalam kelompok klasifikasi harga...", a: "Golongan 3 (Economy Cuts)", w: ["Golongan 1 (Premium Cuts)", "Golongan 2 (Secondary Cuts)"], desc: "Sengkel menempati kelas Economy Cuts (Golongan 3) karena karakteristik fisiknya yang liat." },
+            { code: "M7-23", type: "C1", q: "Bagian Sandung Lamur (Brisket) di station Red Meat dimasukkan ke dalam kategori...", a: "Golongan 3 (Economy Cuts)", w: ["Golongan 1 (Premium Cuts)", "Golongan 2 (Secondary Cuts)"], desc: "Sandung Lamur dinilai ekonomis dan masuk dalam Golongan 3 (Economy Cuts)." },
+            { code: "M7-24", type: "C2", q: "Mengapa potongan daging seperti Sengkel dan Sandung Lamur diklasifikasikan ke dalam kelas Economy Cuts?", a: "Berasal dari otot yang bekerja keras sehingga kaya jaringan ikat dan berserat kasar", w: ["Karena memiliki kadar air berlebih", "Karena merupakan sisa potongan yang tidak sengaja terpotong"], desc: "Otot penyangga berat tubuh seperti kaki (sengkel) bertekstur keras akibat tingginya jaringan ikat kolagen, sehingga butuh waktu masak lama." },
+            { code: "M7-25", type: "C2", q: "Seorang member Indogrosir berkonsultasi ingin membeli daging untuk masakan Rendang. Rekomendasi bagian daging yang paling tepat adalah...", a: "Pendasar (Golongan 2)", w: ["Has Dalam (Golongan 1)", "Sandung Lamur (Golongan 3)"], desc: "SOP merekomendasikan Pendasar (Silver Side) untuk rendang karena seratnya padat dan tidak mudah hancur/hancur berantakan selama perebusan lama." },
+            { code: "M7-26", type: "C2", q: "Jika konsumen mencari bahan baku ekonomis untuk membuat hidangan soto daging, gulai, atau soto, pilihan golongan terbaik adalah...", a: "Golongan 3 (Economy Cuts seperti Sengkel/Sandung Lamur)", w: ["Golongan 1 (Premium Cuts)", "Daging bagian Has Luar saja"], desc: "Gulai, soto, dan rawon sangat cocok menggunakan Economy Cuts yang kaya kaldu lemak gurih dan ekonomis secara modal usaha." },
+            { code: "M7-27", type: "C2", q: "Konsumen kelas restoran mencari potongan steak yang memiliki sifat tekstur paling empuk dan kandungan lemak minimalis. Rekomendasi Anda adalah...", a: "Has Dalam (Tenderloin)", w: ["Has Luar (Sirloin)", "Tanjung (Rump)"], desc: "Tenderloin berada di dalam rongga tubuh sehingga jarang bergerak aktif, menjadikannya potongan terempuk tanpa lapisan lemak tebal." },
+            { code: "M7-28", type: "C2", q: "Manakah deskripsi fisik yang paling akurat menggambarkan potongan premium Lamusir (Rib Eye)?", a: "Berbentuk oval melingkar, memiliki tekstur lemak mata di satu sisi, dan bercita rasa sangat gurih", w: ["Berbentuk kotak simetris tanpa lemak", "Memiliki tulang rawan yang dominan di bagian tengah"], desc: "Ciri otentik Rib Eye atau Lamusir adalah jalinan lemak marmer (marbling) atau lemak mata yang menghasilkan rasa gurih saat dipanggang." },
+            { code: "M7-29", type: "C1", q: "Menjaga kebersihan meja potong, melayani pesanan gramasi konsumen, dan menata nampan Red Meat di chiller display adalah tugas utama dari...", a: "Butcher Team", w: ["Receiving Goods Supervisor", "Kasir Area Perish"], desc: "Seluruh manajemen harian komoditas daging merah segar dipegang secara spesifik oleh personil Butcher." },
+            { code: "M7-30", type: "C2", q: "Mengapa daging Has Luar (Sirloin) memiliki kepadatan serat sedikit di atas Has Dalam (Tenderloin) meski sama-sama premium?", a: "Sebab Sirloin berasal dari lapisan otot punggung luar yang lebih aktif bergerak", w: ["Sebab Sirloin direndam air es lebih lama", "Sebab Sirloin memiliki serat kalsium tinggi"], desc: "Otot punggung luar menahan pergerakan tubuh sapi lebih aktif ketimbang punggung bagian dalam, menciptakan tekstur yang kokoh namun tetap empuk juicy." }
+        ];
+
+        /* GAME MANAGEMENT STATE */
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let runningScore = 0;
+        const totalSessionRounds = 15;
+        let participantName = "";
+        let participantNIK = "";
+        
+        let timerEngine = null;
+        let secondsLeft = 8.0;
+        const maxSecondsAllocated = 8.0;
+        let logSessionHistory = [];
+
+        /* WEB AUDIO ENGINE (Synthesized Ambient Lo-Fi & High-Fidelity SFX) */
+        let audioContextInstance = null;
+        let loFiIntervalTimer = null;
+        let isMutedState = false;
+        let rhythmicStep = 0;
+
+        function initializeAudioSystem() {
+            if (!audioContextInstance) {
+                audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContextInstance.state === 'suspended') {
+                audioContextInstance.resume();
+            }
+        }
+
+        function triggerProceduralLoFiBeat() {
+            if (isMutedState || !audioContextInstance) return;
+            let currentTime = audioContextInstance.currentTime;
+
+            // Step Counter Beat (模拟 110 BPM 节奏段落)
+            // 1. Chill Kick Drum (Beat 0 dan 4)
+            if (rhythmicStep % 8 === 0 || rhythmicStep % 8 === 4) {
+                let osc = audioContextInstance.createOscillator();
+                let gainNode = audioContextInstance.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioContextInstance.destination);
+                
+                osc.frequency.setValueAtTime(90, currentTime);
+                osc.frequency.exponentialRampToValueAtTime(0.01, currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.18, currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.3);
+                
+                osc.start(currentTime);
+                osc.stop(currentTime + 0.3);
+            }
+
+            // 2. Soft Lo-Fi Snare (Beat 4)
+            if (rhythmicStep % 8 === 4) {
+                let osc = audioContextInstance.createOscillator();
+                let gainNode = audioContextInstance.createGain();
+                osc.type = 'triangle';
+                osc.connect(gainNode);
+                gainNode.connect(audioContextInstance.destination);
+                
+                osc.frequency.setValueAtTime(180, currentTime);
+                gainNode.gain.setValueAtTime(0.06, currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.15);
+                
+                osc.start(currentTime);
+                osc.stop(currentTime + 0.15);
+            }
+
+            // 3. Ambient Rhode Chords Progressions (Ganti Akor setiap 16 ketukan)
+            if (rhythmicStep % 16 === 0) {
+                // Alternasi Akor Jazz Santai (Am7 -> Dm7 -> G7 -> Cmaj7)
+                let baseChordFreqs = [220.00, 261.63, 329.63]; // A minor triad baseline
+                let chordCycle = (rhythmicStep % 62 < 16) ? 0 : (rhythmicStep % 62 < 32 ? 1 : 2);
+                
+                if (chordCycle === 1) baseChordFreqs = [146.83, 174.61, 220.00]; // D minor
+                if (chordCycle === 2) baseChordFreqs = [196.00, 246.94, 293.66]; // G Major
+
+                baseChordFreqs.forEach(freq => {
+                    let oscSine = audioContextInstance.createOscillator();
+                    let lowPassFilter = audioContextInstance.createBiquadFilter();
+                    let gainChord = audioContextInstance.createGain();
+                    
+                    oscSine.type = 'sine';
+                    oscSine.frequency.value = freq;
+                    lowPassFilter.type = 'lowpass';
+                    lowPassFilter.frequency.value = 1200; // Mellow filter cut for Lo-fi vibe
+                    
+                    oscSine.connect(lowPassFilter);
+                    lowPassFilter.connect(gainChord);
+                    gainChord.connect(audioContextInstance.destination);
+                    
+                    gainChord.gain.setValueAtTime(0, currentTime);
+                    gainChord.gain.linearRampToValueAtTime(0.06, currentTime + 0.2);
+                    gainChord.gain.exponentialRampToValueAtTime(0.001, currentTime + 3.8);
+                    
+                    oscSine.start(currentTime);
+                    oscSine.stop(currentTime + 4.0);
+                });
+            }
+
+            rhythmicStep = (rhythmicStep + 1) % 32;
+        }
+
+        function triggerActionSFX(isSuccessfulFeedback) {
+            if (isMutedState || !audioContextInstance) return;
+            let timeMarker = audioContextInstance.currentTime;
+            
+            let oscNode = audioContextInstance.createOscillator();
+            let gainNode = audioContextInstance.createGain();
+            oscNode.connect(gainNode);
+            gainNode.connect(audioContextInstance.destination);
+
+            if (isSuccessfulFeedback) {
+                // Upward Neon Chime
+                oscNode.type = 'sine';
+                oscNode.frequency.setValueAtTime(523.25, timeMarker); // C5
+                oscNode.frequency.linearRampToValueAtTime(880.00, timeMarker + 0.15); // A5
+                gainNode.gain.setValueAtTime(0.15, timeMarker);
+                gainNode.gain.exponentialRampToValueAtTime(0.005, timeMarker + 0.4);
+                oscNode.start(timeMarker);
+                oscNode.stop(timeMarker + 0.4);
+            } else {
+                // Downward Error Buzz
+                oscNode.type = 'triangle';
+                oscNode.frequency.setValueAtTime(180.00, timeMarker);
+                oscNode.frequency.linearRampToValueAtTime(90.00, timeMarker + 0.25);
+                gainNode.gain.setValueAtTime(0.25, timeMarker);
+                gainNode.gain.exponentialRampToValueAtTime(0.005, timeMarker + 0.3);
+                oscNode.start(timeMarker);
+                oscNode.stop(timeMarker + 0.3);
+            }
+        }
+
+        /* ARRAY SHUFFLE ENGINE (Fisher-Yates Algorithm) */
+        function randomizeArrayData(targetArray) {
+            for (let i = targetArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [targetArray[i], targetArray[j]] = [targetArray[j], array[i]];
+            }
+            return targetArray;
+        }
+
+        /* UI CONTROLLER ELEMENTS MAPPING */
+        const DOM = {
+            screenGateway: document.getElementById('screen-gateway'),
+            screenGame: document.getElementById('screen-game'),
+            screenDebrief: document.getElementById('screen-debrief'),
+            inputName: document.getElementById('p-name'),
+            inputNIK: document.getElementById('p-nik'),
+            btnStart: document.getElementById('start-shift-btn'),
+            btnRestart: document.getElementById('restart-shift-btn'),
+            btnAudio: document.getElementById('toggle-audio-btn'),
+            hudIdentity: document.getElementById('display-identity'),
+            hudCounter: document.getElementById('display-counter'),
+            barProgress: document.getElementById('fill-progress'),
+            barTimer: document.getElementById('fill-timer'),
+            dropTargetZone: document.getElementById('drop-target'),
+            deckOptions: document.getElementById('deck-options'),
+            maskFeedback: document.getElementById('feedback-pop-mask'),
+            avatarHappy: document.getElementById('avatar-happy'),
+            avatarSad: document.getElementById('avatar-sad'),
+            popTitle: document.getElementById('pop-title'),
+            popCorrectAlert: document.getElementById('pop-correct-answer-alert'),
+            popExplanation: document.getElementById('pop-explanation'),
+            debriefScore: document.getElementById('debrief-score-percent'),
+            debriefReinforcement: document.getElementById('debrief-reinforcement'),
+            debriefScroller: document.getElementById('debrief-scroller'),
+            svgBadgeWin: document.getElementById('svg-badge-win'),
+            svgBadgeLoss: document.getElementById('svg-badge-loss'),
+            debriefVerdict: document.getElementById('debrief-verdict')
+        };
+
+        /* CORE GAME MECHANICS FUNCTIONS */
+        function executeShiftInitialization() {
+            participantName = DOM.inputName.value.trim();
+            participantNIK = DOM.inputNIK.value.trim();
+
+            if (!participantName || !participantNIK) {
+                alert("Peringatan Keamanan: Mohon melengkapi data Nama dan NIK resmi Anda sebelum memulai shift kerja simulasi.");
+                return;
+            }
+
+            // Audio Context Activation
+            initializeAudioSystem();
+            if (loFiIntervalTimer) clearInterval(loFiIntervalTimer);
+            loFiIntervalTimer = setInterval(triggerProceduralLoFiBeat, 400); // Rhythmic engine setup
+
+            // Generate Random Question Selection from Bank (>1000 configurations verified via combination matrix)
+            let fullyShuffledBank = [...questionPool].sort(() => Math.random() - 0.5);
+            activeQuestions = fullyShuffledBank.slice(0, totalSessionRounds);
+            
+            currentIndex = 0;
+            runningScore = 0;
+            logSessionHistory = [];
+
+            DOM.hudIdentity.textContent = `${participantName.toUpperCase()} [${participantNIK}]`;
+            
+            DOM.screenGateway.classList.add('hidden-view');
+            DOM.screenDebrief.classList.add('hidden-view');
+            DOM.screenGame.classList.remove('hidden-view');
+
+            loadSkenarioCard();
+        }
+
+        function loadSkenarioCard() {
+            if (currentIndex >= totalSessionRounds) {
+                concludeShiftSimulation();
+                return;
+            }
+
+            // Update UI elements
+            DOM.hudCounter.textContent = `Progress: ${currentIndex + 1} / ${totalSessionRounds}`;
+            DOM.barProgress.style.width = `${(currentIndex / totalSessionRounds) * 100}%`;
+
+            let currentQuestionData = activeQuestions[currentIndex];
+            DOM.dropTargetZone.textContent = "";
+            
+            // Create inner span to avoid overriding styling
+            let textSpan = document.createElement('span');
+            textSpan.id = "text-scenario";
+            textSpan.textContent = `[LEVEL ${currentQuestionData.type}] ${currentQuestionData.q}`;
+            DOM.dropTargetZone.appendChild(textSpan);
+
+            // Construct choices list mixing correct answer and wrongs
+            let mixedOptionsArray = [currentQuestionData.a, ...currentQuestionData.w].sort(() => Math.random() - 0.5);
+            DOM.deckOptions.innerHTML = "";
+
+            mixedOptionsArray.forEach(choiceText => {
+                let optionChip = document.createElement('div');
+                optionChip.className = "answer-chip";
+                optionChip.textContent = choiceText;
+                bindPointerDragEvents(optionChip, choiceText);
+                DOM.deckOptions.appendChild(optionChip);
+            });
+
+            // Start countdown timer bar mechanism
+            secondsLeft = maxSecondsAllocated;
+            updateTimerBarUI();
+            
+            if (timerEngine) clearInterval(timerEngine);
+            timerEngine = setInterval(() => {
+                secondsLeft -= 0.05;
+                updateTimerBarUI();
+                if (secondsLeft <= 0) {
+                    clearInterval(timerEngine);
+                    processUserDecision(null); // Timeout triggered
+                }
+            }, 50);
+        }
+
+        function updateTimerBarUI() {
+            let percentageLeft = (secondsLeft / maxSecondsAllocated) * 100;
+            DOM.barTimer.style.width = `${percentageLeft}%`;
+        }
+
+        /* POINTER EVENTS CORE: SECURE MOBILE DRAG AND DROP HANDLING */
+        function bindPointerDragEvents(element, answerText) {
+            let trackingDragState = false;
+            let floatingGhostNode = null;
+            let initialTouchOffsetX = 0;
+            let initialTouchOffsetY = 0;
+
+            const handlePointerDown = (e) => {
+                trackingDragState = true;
+                element.setPointerCapture(e.pointerId);
+
+                let boundingBox = element.getBoundingClientRect();
+                initialTouchOffsetX = e.clientX - boundingBox.left;
+                initialTouchOffsetY = e.clientY - boundingBox.top;
+
+                // Instantiate Floating Ghost Item
+                floatingGhostNode = element.cloneNode(true);
+                floatingGhostNode.classList.add('ghost-moving');
+                floatingGhostNode.style.width = `${boundingBox.width}px`;
+                floatingGhostNode.style.left = `${boundingBox.left}px`;
+                floatingGhostNode.style.top = `${boundingBox.top}px`;
+                document.body.appendChild(floatingGhostNode);
+
+                element.style.opacity = "0.25";
+            };
+
+            const handlePointerMove = (e) => {
+                if (!trackingDragState || !floatingGhostNode) return;
+                
+                floatingGhostNode.style.left = `${e.clientX - initialTouchOffsetX}px`;
+                floatingGhostNode.style.top = `${e.clientY - initialTouchOffsetY}px`;
+
+                // Real-time intersection bounds check with drop target card
+                if (checkDropzoneIntersection(e.clientX, e.clientY)) {
+                    DOM.dropTargetZone.classList.add('drag-over');
+                } else {
+                    DOM.dropTargetZone.classList.remove('drag-over');
+                }
+            };
+
+            const handlePointerUp = (e) => {
+                if (!trackingDragState) return;
+                trackingDragState = false;
+                element.releasePointerCapture(e.pointerId);
+
+                if (floatingGhostNode) {
+                    floatingGhostNode.remove();
+                    floatingGhostNode = null;
+                }
+
+                element.style.opacity = "1";
+                DOM.dropTargetZone.classList.remove('drag-over');
+
+                if (checkDropzoneIntersection(e.clientX, e.clientY)) {
+                    processUserDecision(answerText);
+                }
+            };
+
+            element.addEventListener('pointerdown', handlePointerDown);
+            element.addEventListener('pointermove', handlePointerMove);
+            element.addEventListener('pointerup', handlePointerUp);
+        }
+
+        function checkDropzoneIntersection(clientX, clientY) {
+            let zoneBounds = DOM.dropTargetZone.getBoundingClientRect();
+            return (clientX >= zoneBounds.left && clientX <= zoneBounds.right && 
+                    clientY >= zoneBounds.top && clientY <= zoneBounds.bottom);
+        }
+
+        /* EVALUATOR & DEBRIEF FRAMEWORK */
+        function processUserDecision(userSelectedString) {
+            clearInterval(timerEngine);
+            let contextQuestion = activeQuestions[currentIndex];
+            let evaluationIsCorrect = (userSelectedString === contextQuestion.a);
+
+            if (evaluationIsCorrect) {
+                runningScore++;
+            }
+
+            // Log details into review ledger array
+            logSessionHistory.push({
+                qText: contextQuestion.q,
+                userChoice: userSelectedString || "WAKTU HABIS (Kelalaian Respon)",
+                correctChoice: contextQuestion.a,
+                explanationText: contextQuestion.desc,
+                isCorrectState: evaluationIsCorrect
+            });
+
+            triggerFeedbackOverlayPop(evaluationIsCorrect, contextQuestion, userSelectedString);
+        }
+
+        function triggerFeedbackOverlayPop(isCorrect, dataObj, userString) {
+            triggerActionSFX(isCorrect);
+            
+            // Toggle visual avatars based on condition
+            if (isCorrect) {
+                DOM.avatarHappy.classList.remove('hidden-view');
+                DOM.avatarSad.classList.add('hidden-view');
+                DOM.popTitle.textContent = "Keputusan Tepat!";
+                DOM.popTitle.className = "status-title status-correct";
+                DOM.popCorrectAlert.textContent = "";
+            } else {
+                DOM.avatarHappy.classList.add('hidden-view');
+                DOM.avatarSad.classList.remove('hidden-view');
+                DOM.popTitle.textContent = userString ? "Keputusan Kurang Tepat!" : "Waktu Shift Habis!";
+                DOM.popTitle.className = "status-title status-wrong";
+                DOM.popCorrectAlert.innerHTML = `SOP Seharusnya:<br><span style="color:var(--neon-green)">${dataObj.a}</span>`;
+                
+                // Active screen shaking effect on fault
+                DOM.screenGame.classList.add('shake-active');
+                setTimeout(() => DOM.screenGame.classList.remove('shake-active'), 400);
+            }
+
+            DOM.popExplanation.textContent = dataObj.desc;
+            DOM.maskFeedback.classList.add('active');
+
+            // Hold display briefly for 2.5 seconds for instructional retention
+            setTimeout(() => {
+                DOM.maskFeedback.classList.remove('active');
+                currentIndex++;
+                loadSkenarioCard();
+            }, 2500);
+        }
+
+        function concludeShiftSimulation() {
+            clearInterval(timerEngine);
+            DOM.screenGame.classList.add('hidden-view');
+            DOM.screenDebrief.classList.remove('hidden-view');
+
+            let finalPercentageResult = Math.round((runningScore / totalSessionRounds) * 100);
+            DOM.debriefScore.textContent = `${finalPercentageResult}%`;
+
+            let passingThreshold = 70;
+            DOM.debriefScroller.innerHTML = "";
+
+            // Evaluate Win/Lose States and deploy positive reinforcement messages
+            if (finalPercentageResult >= passingThreshold) {
+                DOM.debriefVerdict.textContent = "SHIFT ACCOMPLISHED: LULUS";
+                DOM.debriefVerdict.style.color = "var(--neon-green)";
+                DOM.debriefScore.style.color = "var(--neon-green)";
+                DOM.svgBadgeWin.classList.remove('hidden-view');
+                DOM.svgBadgeLoss.classList.add('hidden-view');
+                DOM.debriefReinforcement.innerHTML = `Selamat! Anda menunjukkan kompetensi kepemimpinan luar biasa dalam mengelola operasional <strong>Perishable & Red Meat</strong>. Standar kualitas produk tetap terjaga prima di bawah pengawasan Anda!`;
+            } else {
+                DOM.debriefVerdict.textContent = "SHIFT INCOMPLETE: BELUM LULUS";
+                DOM.debriefVerdict.style.color = "var(--neon-pink)";
+                DOM.debriefScore.style.color = "var(--neon-pink)";
+                DOM.svgBadgeWin.classList.add('hidden-view');
+                DOM.svgBadgeLoss.classList.remove('hidden-view');
+                DOM.debriefReinforcement.innerHTML = `Jangan patah semangat! Pengetahuan operasional Anda masih membutuhkan penguatan. Sangat disarankan untuk meluangkan waktu membaca kembali modul <strong>Misi 5 Organisasi</strong> & <strong>Misi 7 Red Meat</strong> demi kesuksesan shift berikutnya.`;
+            }
+
+            // Populate the debrief scroller engine with performance cards
+            logSessionHistory.forEach((log, idx) => {
+                let summaryCard = document.createElement('div');
+                summaryCard.className = `review-card ${log.isCorrectState ? 'good' : 'bad'}`;
+                summaryCard.innerHTML = `
+                    <strong>Skenario ${idx + 1}:</strong> ${log.qText}<br>
+                    <span style="color:${log.isCorrectState ? 'var(--neon-green)' : 'var(--neon-pink)'}">Tindakan Anda: ${log.userChoice}</span><br>
+                    ${!log.isCorrectState ? `<strong>Solusi SOP:</strong> <span style="color:var(--neon-green)">${log.correctChoice}</span><br>` : ''}
+                    <small style="display:block; margin-top:4px; color:#cbd5e1;"><em>Koreksi Ilmu: ${log.explanationText}</em></small>
+                `;
+                DOM.debriefScroller.appendChild(summaryCard);
+            });
+        }
+
+        /* INITIAL BINDING HANDLERS */
+        DOM.btnStart.addEventListener('click', executeShiftInitialization);
+        DOM.btnRestart.addEventListener('click', () => {
+            DOM.screenDebrief.classList.add('hidden-view');
+            DOM.screenGateway.classList.remove('hidden-view');
+            DOM.inputName.value = "";
+            DOM.inputNIK.value = "";
+        });
+
+        DOM.btnAudio.addEventListener('click', () => {
+            isMutedState = !isMutedState;
+            DOM.btnAudio.textContent = isMutedState ? '🔇' : '🔊';
+            if (!isMutedState) {
+                initializeAudioSystem();
+            }
+        });
+    </script>
+</body>
+</html>
